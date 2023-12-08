@@ -18,6 +18,18 @@ Verificar se as animações estão fluidas, sem serem interrompidas e coerentes 
 
 Verificar se as colisões estão coerentes, fazem sentido com o objetivo de jogo de funcionando corretamente. Optamos por deixar visíveis a hitbox dos ataques.
 
+## Condição de Vitória
+
+Atualmente, vence o usuário que derrotar primeiro o inimigo. Ao ser derrotado, o usuário terá uma animação de "morte" e não poderá mais se mover.
+
+Além disso, ainda não implementamos HUD para visualizar a vida dos personagens. Importante pontuar que personagens começarão a luta com 100 de HP.
+
+### Dano por ataque
+
+> Ataque não bloqueados: 10 de dano
+
+> Ataques bloqueados: 5 de dano
+
 ## Controles
 
 Atualmente, o jogo possui as mecânicas de movimentação horizontal, pular, agachar, bloquear e os ataques soco e chute. Os comandos de cada um dos players estará descrito abaixo:
