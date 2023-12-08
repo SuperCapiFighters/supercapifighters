@@ -38,8 +38,11 @@ const std::vector<int> Character::GetStateArray(CharacterSelect character, Chara
                     return {84, 85, 86, 87};
                 case CharacterState::DownKick:
                     return {78, 79, 80, 81, 82, 83};
+                case CharacterState::BasicDamage:
+                    return {232, 233, 234, 235, 234, 233, 232};
                 case CharacterState::Dead:
-                    return {268, 269, 270, 271, 272, 273, 274, 274};
+//                    return {268, 269, 270, 271, 272, 273, 274, 274};
+                    return {268, 269, 270};
                 case CharacterState::Win:
                     return {275, 276, 277, 278, 279, 280, 281, 282};
                 case CharacterState::Lose:
@@ -73,8 +76,11 @@ const std::vector<int> Character::GetStateArray(CharacterSelect character, Chara
                     return {104, 105, 106, 107, 108};
                 case CharacterState::DownKick:
                     return {74, 75, 76, 77};
+                case CharacterState::BasicDamage:
+                    return {230, 231, 232, 233, 232, 231, 230};
                 case CharacterState::Dead:
-                    return {258, 259, 260, 261, 262, 263, 264, 265};
+//                    return {258, 259, 260, 261, 262, 263, 264, 265};
+                    return {258, 259, 260};
                 case CharacterState::Win:
                     return {274, 275, 276, 277, 278, 279, 280, 281, 282};
                 case CharacterState::Lose:

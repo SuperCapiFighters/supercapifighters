@@ -49,6 +49,9 @@ private:
     bool mIsPunching;
     bool mIsKicking;
     bool mIsDown;
+    bool mIsDamage;
+
+    float mAnimationTimer;
 
 
     FightStatus mFightStatus;
