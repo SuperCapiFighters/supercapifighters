@@ -22,5 +22,5 @@ Ground::Ground(Game* game, Vector2 position)
     mRigidBodyComponent = new RigidBodyComponent(this, 10.0f, 1.0f, 1, true);
 
     std::vector<Vector2> vertices = {Vector2(0, 0), Vector2(width, 0), Vector2(width, heigth), Vector2(0, heigth)};
-    mDrawPolygonComponent = new DrawPolygonComponent(this, width, heigth);
+    mDrawPolygonComponent = new DrawPolygonComponent(this,0,0, width, heigth);
 }
