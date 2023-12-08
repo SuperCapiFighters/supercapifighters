@@ -11,7 +11,7 @@
 
 #define FLOOR_HEIGHT 50.0f
 
-Player::Player(Game *game, Vector2 position, int playerNumber, CharacterSelect characterSelect, float forwardSpeed, float jumpSpeed)
+Player::Player(Game *game, Vector2 position, int playerNumber, CharacterSelect characterSelect,float heart, float forwardSpeed, float jumpSpeed)
         : Actor(game),
           mPlayerNumber(playerNumber),
           mCharacterSelect(characterSelect),
@@ -25,15 +25,30 @@ Player::Player(Game *game, Vector2 position, int playerNumber, CharacterSelect c
           mIsPunching(false),
           mIsKicking(false),
           mIsMoving(false),
+          mHeart(heart),
           mFightStatus(FightStatus::Fight) {
 
     mRigidBodyComponent = new RigidBodyComponent(this, 1.0f, 2.5f);
     const float width = 330.0f;
     const float height = 330.0f;
 
-    mMovementColliderComponent = new AABBColliderComponent(this, 0, 0, 200, height, ColliderLayer::Player);
 
-    mDrawPolygonComponent = new DrawPolygonComponent(this, width, height);
+
+    mDrawPolygonComponent = new DrawPolygonComponent(this,0,0, width, height);
+
+
+    if(mPlayerNumber==2){
+        mMovementColliderComponent = new AABBColliderComponent(this, 0, 0, width, height, ColliderLayer::Player2);
+        mPunchColliderComponent = new AABBColliderComponent(this,-65,55,-200,50,ColliderLayer::Punch);
+        mDrawPunchComponent = new DrawPolygonComponent(this,-205,55,-50,50);
+    }else{
+        mMovementColliderComponent = new AABBColliderComponent(this, 0, 0, width, height, ColliderLayer::Player1);
+        mPunchColliderComponent = new AABBColliderComponent(this,200,55,200,50,ColliderLayer::Punch);
+        mDrawPunchComponent = new DrawPolygonComponent(this,205,55,50,50);
+    }
+
+    mPunchColliderComponent->SetEnabled(false);
+    mDrawPunchComponent->setIsDraw(false);
 
     mRotation = mPlayerNumber == 1 ? Math::Pi : 0.0f;
 
@@ -151,6 +166,17 @@ void Player::OnProcessInput(const uint8_t *state) {
 }
 
 void Player::OnUpdate(float deltaTime) {
+
+    if (mIsPunching) {
+        mPunchColliderComponent->SetEnabled(true);
+        mDrawPunchComponent->setIsDraw(true);
+//        mPunchColliderComponent->SetEnabled(true);
+    } else {
+        mPunchColliderComponent->SetEnabled(false);
+        mDrawPunchComponent->setIsDraw(false);
+//        mPunchColliderComponent->SetEnabled(false);
+    }
+
     if (mRigidBodyComponent->GetOwner()->GetPosition().x - mMovementColliderComponent->GetWidth() /2 < mGame->GetCameraPos().x)
         mRigidBodyComponent->GetOwner()->SetPosition(Vector2(mGame->GetCameraPos().x + mMovementColliderComponent->GetWidth() /2, mRigidBodyComponent->GetOwner()->GetPosition().y));
 
@@ -220,7 +246,14 @@ void Player::Kill() {
 }
 
 void Player::OnCollision(std::unordered_map<CollisionSide, AABBColliderComponent::Overlap> &responses) {
-    for (auto &response : responses) {
+    if(mPunchColliderComponent->IsEnabled())
+        for (auto &response : responses) {
+            if((mPlayerNumber == 1 && response.second.target->GetLayer() == ColliderLayer::Player2)
+                || (mPlayerNumber == 2 && response.second.target->GetLayer() == ColliderLayer::Player1)
+            ){
+//                printf("-1\n");
+                response.second.target->GetOwner()->ApplyDamage(10.0);
+            }
 //        if(response.second.target->GetLayer() == ColliderLayer::Enemy){
 //            if (response.second.side == CollisionSide::Down) {
 //                mRigidBodyComponent->SetVelocity(Vector2(mRigidBodyComponent->GetVelocity().x, mJumpSpeed/1.5f));
@@ -235,4 +268,30 @@ void Player::OnCollision(std::unordered_map<CollisionSide, AABBColliderComponent
 //            }
 //        }
     }
+
+    for(auto &response: responses){
+        if(response.second.target->GetLayer() == ColliderLayer::Punch && (mPlayerNumber == 2 && response.second.target->GetLayer() == ColliderLayer::Player2)
+           || (mPlayerNumber == 1 && response.second.target->GetLayer() == ColliderLayer::Player1)
+           ){
+//            response.second.target->GetOwner().
+            printf("-2\n");
+//            printf("%d\n", response.second.target->GetOwner()->GetComponent<Player>()->GetPlayerNumber());
+//            ApplyDamage(10);
+        }
+    }
+}
+
+void Player::ApplyDamage(float damage) {
+    if(mMovementColliderComponent->GetLayer()==ColliderLayer::Defense){
+        this->mHeart -= damage/(float)2.0;
+    }else{
+        this->mHeart -= damage;
+        printf("%f\n",mHeart);
+    }
+
+    if(this->mHeart<0.0){
+        mIsDead = true;
+        Kill();
+    }
+
 }

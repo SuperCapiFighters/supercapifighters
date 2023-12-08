@@ -88,3 +88,8 @@ void Actor::AddComponent(Component* c)
         return a->GetUpdateOrder() < b->GetUpdateOrder();
     });
 }
+
+void Actor::ApplyDamage(float damage) {
+
+}
+
