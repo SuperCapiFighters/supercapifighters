@@ -83,10 +83,9 @@ Player::Player(Game *game, Vector2 position, int playerNumber, CharacterSelect c
     mDrawComponent->AddAnimation("down_kick", mCharacter->GetStateArray(mCharacterSelect, CharacterState::DownKick));
     mDrawComponent->SetAnimFPS(9.0f, "down_kick");
 
-    mDrawComponent->AddAnimation("dead", mCharacter->GetStateArray(mCharacterSelect, CharacterState::Dead));
-    mDrawComponent->AddAnimation("win", mCharacter->GetStateArray(mCharacterSelect, CharacterState::Win));
-    mDrawComponent->AddAnimation("lose", mCharacter->GetStateArray(mCharacterSelect, CharacterState::Lose));
-
+    mDrawComponent->AddAnimation("dead", mCharacter->GetStateArray(mCharacterSelect, CharacterState::Dead), false);
+    mDrawComponent->AddAnimation("win", mCharacter->GetStateArray(mCharacterSelect, CharacterState::Win), false);
+    mDrawComponent->AddAnimation("lose", mCharacter->GetStateArray(mCharacterSelect, CharacterState::Lose), false);
     mDrawComponent->SetAnimation("idle");
 
     // Default AnimSpeed
@@ -94,11 +93,11 @@ Player::Player(Game *game, Vector2 position, int playerNumber, CharacterSelect c
 }
 
 void Player::OnProcessInput(const uint8_t *state) {
-        if(state[SDL_SCANCODE_I]){ // FIXME Only to test animation
-            mIsDead = true;
-        } else {
-            mIsDead = false;
-        }
+//        if(state[SDL_SCANCODE_I]){ // FIXME Only to test animation
+//            mIsDead = true;
+//        } else {
+//            mIsDead = false;
+//        }
 
         if(state[SDL_SCANCODE_O]){ // FIXME Only to test animation
             mFightStatus = FightStatus::Win;
@@ -274,7 +273,7 @@ void Player::OnCollision(std::unordered_map<CollisionSide, AABBColliderComponent
            || (mPlayerNumber == 1 && response.second.target->GetLayer() == ColliderLayer::Player1)
            ){
 //            response.second.target->GetOwner().
-            printf("-2\n");
+//            printf("-2\n");
 //            printf("%d\n", response.second.target->GetOwner()->GetComponent<Player>()->GetPlayerNumber());
 //            ApplyDamage(10);
         }
