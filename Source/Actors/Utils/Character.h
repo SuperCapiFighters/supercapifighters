@@ -28,7 +28,9 @@ enum class CharacterState {
     DownKick,
     Dead,
     Win,
-    Lose
+    Lose,
+    BasicDamage,
+    BreakBlock
 };
 
 class Character {

@@ -57,9 +57,9 @@ void Game::InitializeActors() {
     Vector2 player1Position = Vector2(300.0f,mWindowHeight - 32.0f - 330.0f);
     Vector2 player2Position = Vector2(mWindowWidth - 300.0f,mWindowHeight - 32.0f - 330.0f);
 
-    mPlayer2 = new Player(this, player2Position, 2, CharacterSelect::Vegeta,1000.0f);
+    mPlayer2 = new Player(this, player2Position, 2, CharacterSelect::Vegeta,100.0f);
     mPlayer2->SetPosition(player2Position);
-    mPlayer1 = new Player(this, player1Position, 1, CharacterSelect::Goku,1000.0f);
+    mPlayer1 = new Player(this, player1Position, 1, CharacterSelect::Goku,100.0f);
     mPlayer1->SetPosition(player1Position);
 }
 
