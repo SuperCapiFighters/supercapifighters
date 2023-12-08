@@ -18,7 +18,7 @@ public:
     void Update(float deltaTime) override;
 
     // Use to change the FPS of the animation
-    void SetAnimFPS(float fps) { mAnimFPS = fps; }
+    void SetAnimFPS(float fps, const std::string& animName = "");
 
     // Set the current active animation
     void SetAnimation(const std::string& name);
@@ -34,6 +34,9 @@ public:
 
 private:
     void LoadSpriteSheet(const std::string& texturePath, const std::string& dataPath);
+
+    // Map of animation name to the animation speed
+    std::unordered_map<std::string, float> mAnimSpeeds;
 
     // Vector of sprites
     std::vector<SDL_Rect*> mSpriteSheetData;

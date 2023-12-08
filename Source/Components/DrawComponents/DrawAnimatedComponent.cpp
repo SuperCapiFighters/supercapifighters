@@ -59,7 +59,9 @@ void DrawAnimatedComponent::Update(float deltaTime) {
     if (mIsPaused)
         return;
 
-    mAnimTimer += mAnimFPS * deltaTime;
+    float animSpeed = mAnimSpeeds.find(mAnimName) != mAnimSpeeds.end() ? mAnimSpeeds[mAnimName] : mAnimFPS;
+    mAnimTimer += animSpeed * deltaTime;
+
 
     for(int i = 0; i < mAnimations[mAnimName].first.size(); i++) {
         if(mAnimTimer >= mAnimations[mAnimName].first.size()) {
@@ -78,4 +80,12 @@ void DrawAnimatedComponent::SetAnimation(const std::string &name) {
 
 void DrawAnimatedComponent::AddAnimation(const std::string &name, const std::vector<int> &spriteNums, const bool isLooping) {
     mAnimations.emplace(name, make_pair(spriteNums, isLooping));
+}
+
+void DrawAnimatedComponent::SetAnimFPS(float fps, const std::string& animName) {
+    if (animName.empty()) {
+        mAnimFPS = fps;
+    } else {
+        mAnimSpeeds[animName] = fps;
+    }
 }

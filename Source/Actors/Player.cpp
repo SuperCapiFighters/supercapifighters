@@ -43,22 +43,38 @@ Player::Player(Game *game, Vector2 position, int playerNumber, CharacterSelect c
 
     mDrawComponent->AddAnimation("idle", mCharacter->GetStateArray(mCharacterSelect, CharacterState::Idle));
     mDrawComponent->AddAnimation("move", mCharacter->GetStateArray(mCharacterSelect, CharacterState::Move));
+
     mDrawComponent->AddAnimation("jump", mCharacter->GetStateArray(mCharacterSelect, CharacterState::Jump));
+    mDrawComponent->SetAnimFPS(10.0f, "jump");
+
     mDrawComponent->AddAnimation("down", mCharacter->GetStateArray(mCharacterSelect, CharacterState::Down), false);
+    mDrawComponent->SetAnimFPS(10.0f, "down");
+
     mDrawComponent->AddAnimation("block", mCharacter->GetStateArray(mCharacterSelect, CharacterState::Block), false);
     mDrawComponent->AddAnimation("jump_block", mCharacter->GetStateArray(mCharacterSelect, CharacterState::JumpBlock), false);
     mDrawComponent->AddAnimation("down_block", mCharacter->GetStateArray(mCharacterSelect, CharacterState::DownBlock), false);
+
     mDrawComponent->AddAnimation("punch", mCharacter->GetStateArray(mCharacterSelect, CharacterState::Punch));
+    mDrawComponent->SetAnimFPS(9.0f, "punch");
     mDrawComponent->AddAnimation("jump_punch", mCharacter->GetStateArray(mCharacterSelect, CharacterState::JumpPunch));
+    mDrawComponent->SetAnimFPS(6.0f, "jump_punch");
     mDrawComponent->AddAnimation("down_punch", mCharacter->GetStateArray(mCharacterSelect, CharacterState::DownPunch));
+    mDrawComponent->SetAnimFPS(12.0f, "down_punch");
+
     mDrawComponent->AddAnimation("kick", mCharacter->GetStateArray(mCharacterSelect, CharacterState::Kick));
+    mDrawComponent->SetAnimFPS(7.0f, "kick");
     mDrawComponent->AddAnimation("jump_kick", mCharacter->GetStateArray(mCharacterSelect, CharacterState::JumpKick));
+    mDrawComponent->SetAnimFPS(6.0f, "jump_kick");
     mDrawComponent->AddAnimation("down_kick", mCharacter->GetStateArray(mCharacterSelect, CharacterState::DownKick));
+    mDrawComponent->SetAnimFPS(9.0f, "down_kick");
+
     mDrawComponent->AddAnimation("dead", mCharacter->GetStateArray(mCharacterSelect, CharacterState::Dead));
     mDrawComponent->AddAnimation("win", mCharacter->GetStateArray(mCharacterSelect, CharacterState::Win));
     mDrawComponent->AddAnimation("lose", mCharacter->GetStateArray(mCharacterSelect, CharacterState::Lose));
 
     mDrawComponent->SetAnimation("idle");
+
+    // Default AnimSpeed
     mDrawComponent->SetAnimFPS(7.0f);
 }
 
