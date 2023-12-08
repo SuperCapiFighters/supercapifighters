@@ -6,15 +6,17 @@
 #include "../../Actors/Actor.h"
 #include "../../Game.h"
 
-DrawPolygonComponent::DrawPolygonComponent(class Actor* owner, int width, int height, int drawOrder)
+DrawPolygonComponent::DrawPolygonComponent(class Actor* owner,int dx, int dy, int width, int height, int drawOrder)
         :DrawComponent(owner)
         ,mDrawOrder(drawOrder)
+        ,mDraw(true)
 {
-    mVertices = {Vector2(-width/2, -height/2), Vector2(width/2, -height/2), Vector2(width/2, height/2), Vector2(-width/2, height/2)};
+    mVertices = {Vector2(-width/2 + dx, -height/2-dy), Vector2(width/2+dx, -height/2 -dy), Vector2(width/2 +dx, height/2-dy), Vector2(-width/2 +dx, height/2-dy)};
 }
 
 void DrawPolygonComponent::Draw(SDL_Renderer *renderer)
 {
+    if(!mDraw) return;
     // Set draw color to green
     SDL_SetRenderDrawColor(renderer, 0, 255, 0, 255);
 

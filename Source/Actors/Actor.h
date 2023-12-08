@@ -72,6 +72,8 @@ public:
     virtual void OnCollision(std::unordered_map<CollisionSide, AABBColliderComponent::Overlap>& responses);
     virtual void Kill();
 
+    virtual void ApplyDamage(float damage);
+
 protected:
     class Game* mGame;
 
@@ -79,6 +81,7 @@ protected:
     virtual void OnUpdate(float deltaTime);
     // Any actor-specific update code (overridable)
     virtual void OnProcessInput(const Uint8* keyState);
+
 
     // Actor's state
     ActorState mState;
