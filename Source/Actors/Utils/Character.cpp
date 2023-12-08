@@ -84,7 +84,8 @@ const std::vector<int> Character::GetStateArray(CharacterSelect character, Chara
                 case CharacterState::Win:
                     return {274, 275, 276, 277, 278, 279, 280, 281, 282};
                 case CharacterState::Lose:
-                    return {283, 284, 285, 286, 287, 288};
+//                    return {283, 284, 285, 286, 287, 288};
+                    return {283, 284, 285};
             }
     }
 }

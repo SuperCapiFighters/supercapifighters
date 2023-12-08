@@ -12,7 +12,7 @@
 #define FLOOR_HEIGHT 50.0f
 
 Player::Player(Game *game, Vector2 position, int playerNumber, CharacterSelect characterSelect,float heart, float forwardSpeed, float jumpSpeed)
-        : Actor(game),
+        : Actor(game, position),
           mPlayerNumber(playerNumber),
           mCharacterSelect(characterSelect),
           mForwardSpeed(forwardSpeed),
@@ -36,7 +36,7 @@ Player::Player(Game *game, Vector2 position, int playerNumber, CharacterSelect c
 
     mDrawPolygonComponent = new DrawPolygonComponent(this,0,0, width, height);
 
-    if(mPlayerNumber==2){
+    if(mPlayerNumber == 2){
         mMovementColliderComponent = new AABBColliderComponent(this, 0, 0, width, height, ColliderLayer::Player2);
         mPunchColliderComponent = new AABBColliderComponent(this,-65,55,-200,50,ColliderLayer::Punch);
         mDrawPunchComponent = new DrawPolygonComponent(this,-205,55,-50,50);
@@ -95,17 +95,10 @@ Player::Player(Game *game, Vector2 position, int playerNumber, CharacterSelect c
 }
 
 void Player::OnProcessInput(const uint8_t *state) {
-        if(state[SDL_SCANCODE_O]){ // FIXME Only to test animation
-            mFightStatus = FightStatus::Win;
-        } else {
-            if(state[SDL_SCANCODE_P]){ // FIXME Only to test animation
-                mFightStatus = FightStatus::Lose;
-            } else {
-                mFightStatus = FightStatus::Fight;
-            }
-        }
+        if(mIsDead || mFightStatus != FightStatus::Fight)
+            return;
 
-        if(mIsDead)
+        if(mIsDamage)
             return;
 
 
@@ -131,59 +124,49 @@ void Player::OnProcessInput(const uint8_t *state) {
             }
         }
 
-    if(mPlayerNumber == 1 && state[SDL_SCANCODE_E] || mPlayerNumber == 2 && state[SDL_SCANCODE_KP_1]) {
-        mIsBlocking = true;
-        mIsPunching = false;
-        mIsKicking = false;
-    } else {
-        mIsBlocking = false;
-    }
+        if(mPlayerNumber == 1 && state[SDL_SCANCODE_R] || mPlayerNumber == 2 && state[SDL_SCANCODE_KP_2]) {
+            mIsPunching = true;
+            mIsBlocking = false;
+            mIsKicking = false;
+        }
 
-    if(mPlayerNumber == 1 && state[SDL_SCANCODE_R] || mPlayerNumber == 2 && state[SDL_SCANCODE_KP_2]) {
-        mIsPunching = true;
-        mIsBlocking = false;
-        mIsKicking = false;
-    }
+        if(mPlayerNumber == 1 && state[SDL_SCANCODE_T] || mPlayerNumber == 2 && state[SDL_SCANCODE_KP_3]) {
+            mIsKicking = true;
+            mIsBlocking = false;
+            mIsPunching = false;
+        }
 
-    if(mPlayerNumber == 1 && state[SDL_SCANCODE_T] || mPlayerNumber == 2 && state[SDL_SCANCODE_KP_3]) {
-        mIsKicking = true;
-        mIsBlocking = false;
-        mIsPunching = false;
-    }
+        if(mPlayerNumber == 1 && state[SDL_SCANCODE_E] || mPlayerNumber == 2 && state[SDL_SCANCODE_KP_1]) {
+            mIsBlocking = true;
+            mIsPunching = false;
+            mIsKicking = false;
+        } else {
+            mIsBlocking = false;
+        }
 
-    if(mPlayerNumber == 1 && state[SDL_SCANCODE_S] || mPlayerNumber == 2 && state[SDL_SCANCODE_DOWN]) {
-        mIsDown = true;
-    } else {
-        mIsDown = false;
-    }
+        if(mPlayerNumber == 1 && state[SDL_SCANCODE_S] || mPlayerNumber == 2 && state[SDL_SCANCODE_DOWN]) {
+            mIsDown = true;
+        } else {
+            mIsDown = false;
+        }
 }
 
 void Player::OnUpdate(float deltaTime) {
     if (mIsPunching) {
         mPunchColliderComponent->SetEnabled(true);
         mDrawPunchComponent->setIsDraw(true);
-
-        // Update punch timer
-        mAnimationTimer += deltaTime;
-        if (mAnimationTimer >= 0.40f) {
-            mIsPunching = false;
-            mAnimationTimer = 0.0f;
-        }
+        this->StopAnimationTimer(deltaTime, 0.40f, "punch");
     } else if (mIsKicking) {
         mPunchColliderComponent->SetEnabled(true);
         mDrawPunchComponent->setIsDraw(true);
-
-        // Update kick timer
+        this->StopAnimationTimer(deltaTime, 0.40f, "kick");
+    } else if (mIsDamage) {
+        this->StopAnimationTimer(deltaTime, 0.45f, "damage");
         mAnimationTimer += deltaTime;
-        if (mAnimationTimer >= 0.40f) {
-            mIsKicking = false;
-            mAnimationTimer = 0.0f;
-        }
-    } else if (mIsDamage){
+    } else if (mIsDead) {
         mAnimationTimer += deltaTime;
-        if(mAnimationTimer >= 0.45f) {
-            mIsDamage = false;
-            mAnimationTimer = 0.0f;
+        if (mAnimationTimer >= 1.5f) {
+            mGame->EndFight(this);
         }
     } else {
         mPunchColliderComponent->SetEnabled(false);
@@ -206,53 +189,62 @@ void Player::OnUpdate(float deltaTime) {
     ManageAnimations();
 }
 
+void Player::StopAnimationTimer(float deltaTime, float animationTime, std::string variable) {
+    mAnimationTimer += deltaTime;
+    if (mAnimationTimer >= animationTime) {
+        mAnimationTimer = 0.0f;
+        if(variable == "punch") mIsPunching = false;
+        if(variable == "kick") mIsKicking = false;
+        if(variable == "damage") mIsDamage = false;
+    }
+}
+
 void Player::ManageAnimations() {
-    if(mFightStatus == FightStatus::Win)
-        mDrawComponent->SetAnimation("win");
-    else if(mFightStatus == FightStatus::Lose)
-        mDrawComponent->SetAnimation("lose");
-    else {
+    if(mFightStatus == FightStatus::Fight) {
         if(mIsDead) {
             mDrawComponent->SetAnimation("dead");
-        } else if(mIsOnGround) {
-            if(mIsMoving) {
-                mDrawComponent->SetAnimation("move");
-            } else if(mIsDamage) {
-                mDrawComponent->SetAnimation("basic_damage");
-            } else if(mIsDown) {
-                if(mIsBlocking){
-                    mDrawComponent->SetAnimation("down_block");
-                } else if (mIsPunching){
-                    mDrawComponent->SetAnimation("down_punch");
-                } else if (mIsKicking){
-                    mDrawComponent->SetAnimation("down_kick");
-                } else {
-                    mDrawComponent->SetAnimation("down");
-                }
-            } else if (mIsBlocking) {
-                mDrawComponent->SetAnimation("block");
-            } else if (mIsPunching){
-                mDrawComponent->SetAnimation("punch");
-            } else if (mIsKicking){
-                mDrawComponent->SetAnimation("kick");
-            } else {
-                mDrawComponent->SetAnimation("idle");
-            }
         } else {
-            if(mIsJumping) {
-                if(mIsBlocking){
-                    mDrawComponent->SetAnimation("jump_block");
+            if(mIsOnGround) {
+                if(mIsDamage) {
+                    mDrawComponent->SetAnimation("basic_damage");
+                } else if(mIsDown) {
+                    if(mIsBlocking){
+                        mDrawComponent->SetAnimation("down_block");
+                    } else if (mIsPunching){
+                        mDrawComponent->SetAnimation("down_punch");
+                    } else if (mIsKicking){
+                        mDrawComponent->SetAnimation("down_kick");
+                    } else {
+                        mDrawComponent->SetAnimation("down");
+                    }
+                } else if (mIsBlocking) {
+                    mDrawComponent->SetAnimation("block");
                 } else if (mIsPunching){
-                    mDrawComponent->SetAnimation("jump_punch");
+                    mDrawComponent->SetAnimation("punch");
                 } else if (mIsKicking){
+                    mDrawComponent->SetAnimation("kick");
+                } else if(mIsMoving) {
+                    mDrawComponent->SetAnimation("move");
+                } else  {
+                    mDrawComponent->SetAnimation("idle");
+                }
+            } else if (mIsJumping) {
+                if (mIsBlocking) {
+                    mDrawComponent->SetAnimation("jump_block");
+                } else if (mIsPunching) {
+                    mDrawComponent->SetAnimation("jump_punch");
+                } else if (mIsKicking) {
                     mDrawComponent->SetAnimation("jump_kick");
                 } else {
                     mDrawComponent->SetAnimation("jump");
                 }
             }
         }
+    } else if(mFightStatus == FightStatus::Win) {
+        mDrawComponent->SetAnimation("win");
+    } else if(mFightStatus == FightStatus::Lose) {
+        mDrawComponent->SetAnimation("lose");
     }
-
 }
 
 void Player::Kill() {
@@ -261,6 +253,19 @@ void Player::Kill() {
     ColliderLayer colliderLayer = mPlayerNumber == 1 ? ColliderLayer::Player1 : ColliderLayer::Player2;
     mMovementColliderComponent = new AABBColliderComponent(this, 0, 0, 200.0f, 50.0f, colliderLayer);
     mMovementColliderComponent->SetEnabled(false);
+}
+
+void Player::EndFight(FightStatus fightStatus) {
+    if(mFightStatus == FightStatus::Fight) {
+        mFightStatus = fightStatus;
+
+        ColliderLayer layer = mPlayerNumber == 1 ? ColliderLayer::Player1 : ColliderLayer::Player2;
+        mMovementColliderComponent = new AABBColliderComponent(this, 0, 0, 200.0f, 400.0f, layer);
+        mMovementColliderComponent->SetEnabled(false);
+
+        Vector2 position = mPlayerNumber == 1 ? Vector2(300.0f,mGame->GetWindowHeight() - 600.0f) : Vector2(mGame->GetWindowWidth() - 300.0f,mGame->GetWindowHeight() - 600.0f);
+        this->SetPosition(position);
+    }
 }
 
 void Player::OnCollision(std::unordered_map<CollisionSide, AABBColliderComponent::Overlap> &responses) {
@@ -296,9 +301,9 @@ void Player::OnCollision(std::unordered_map<CollisionSide, AABBColliderComponent
 }
 
 void Player::ApplyDamage(float damage) {
-    if(mMovementColliderComponent->GetLayer()==ColliderLayer::Defense){
+    if(mIsBlocking) {
         this->mHeart -= damage/(float)2.0;
-    }else{
+    } else {
         this->mHeart -= damage;
         mIsDamage = true;
     }

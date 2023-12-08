@@ -37,8 +37,6 @@ add_executable(${PROJECT_NAME}
         Source/Components/DrawComponents/DrawAnimatedComponent.h
         Source/Actors/Player.cpp
         Source/Actors/Player.h
-        Source/Actors/Ground.cpp
-        Source/Actors/Ground.h
         Source/Actors/Utils/Character.cpp
         Source/Actors/Utils/Character.h
 )

@@ -23,7 +23,7 @@ enum class ActorState
 class Actor
 {
 public:
-    Actor(class Game* game);
+    Actor(class Game* game, Vector2 position = Vector2::Zero);
     virtual ~Actor();
 
     // Update function called from Game (not overridable)

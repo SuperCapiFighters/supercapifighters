@@ -17,7 +17,6 @@
 #include <fstream>
 #include <vector>
 #include "Actors/Player.h"
-#include "Actors/Ground.h"
 
 Game::Game(int windowWidth, int windowHeight)
     : mWindow(nullptr), mRenderer(nullptr), mTicksCount(0), mIsRunning(true), mUpdatingActors(false), mWindowWidth(windowWidth), mWindowHeight(windowHeight) {
@@ -68,9 +67,6 @@ void Game::LoadLevel() {
     auto* background = new Actor(this);
     background->SetPosition(Vector2(0.0f, 0.0f));
     new DrawSpriteComponent(background, "../Assets/Sprites/Background.jpg", mWindowWidth, mWindowHeight);
-
-//    float blockHeight = 50.0f;
-//    auto* ground = new Ground(this, Vector2(0, mWindowHeight - blockHeight));
 }
 
 void Game::RunLoop() {
@@ -205,6 +201,16 @@ void Game::GenerateOutput() {
 
     // Swap front buffer and back buffer
     SDL_RenderPresent(mRenderer);
+}
+
+void Game::EndFight(Player *loser) {
+    if(loser == mPlayer1) {
+        mPlayer2->EndFight(FightStatus::Win);
+        mPlayer1->EndFight(FightStatus::Lose);
+    } else {
+        mPlayer1->EndFight(FightStatus::Win);
+        mPlayer2->EndFight(FightStatus::Lose);
+    }
 }
 
 SDL_Texture *Game::LoadTexture(const std::string &texturePath) {

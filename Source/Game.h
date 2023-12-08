@@ -47,6 +47,7 @@ public:
     SDL_Texture* LoadTexture(const std::string& texturePath);
 
     // Game-specific
+    void EndFight(class Player* loser);
 
 private:
     void ProcessInput();

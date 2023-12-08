@@ -11,9 +11,9 @@
 #include "../Components/Component.h"
 #include <algorithm>
 
-Actor::Actor(Game* game)
+Actor::Actor(Game* game, Vector2 position)
         : mState(ActorState::Active)
-        , mPosition(Vector2::Zero)
+        , mPosition(position)
         , mScale(1.0f)
         , mRotation(0.0f)
         , mGame(game)

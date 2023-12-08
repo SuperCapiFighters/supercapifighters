@@ -24,8 +24,9 @@ public:
     void OnCollision(std::unordered_map<CollisionSide, AABBColliderComponent::Overlap>& responses) override;
     void ApplyDamage(float damage) override;
 
-
     void Kill() override;
+    void EndFight(FightStatus fightStatus);
+    void StopAnimationTimer(float deltaTime, float animationTime, std::string variable);
 
 private:
     void ManageAnimations();
