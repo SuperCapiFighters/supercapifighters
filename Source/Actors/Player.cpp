@@ -69,21 +69,24 @@ Player::Player(Game *game, Vector2 position, int playerNumber, CharacterSelect c
     mDrawComponent->AddAnimation("down_block", mCharacter->GetStateArray(mCharacterSelect, CharacterState::DownBlock), false);
 
     mDrawComponent->AddAnimation("punch", mCharacter->GetStateArray(mCharacterSelect, CharacterState::Punch), true);
-    mDrawComponent->SetAnimFPS(9.0f, "punch");
-    mDrawComponent->AddAnimation("jump_punch", mCharacter->GetStateArray(mCharacterSelect, CharacterState::JumpPunch));
-    mDrawComponent->SetAnimFPS(6.0f, "jump_punch");
-    mDrawComponent->AddAnimation("down_punch", mCharacter->GetStateArray(mCharacterSelect, CharacterState::DownPunch));
-    mDrawComponent->SetAnimFPS(12.0f, "down_punch");
+    mDrawComponent->SetAnimFPS(8.0f, "punch");
+    mDrawComponent->AddAnimation("jump_punch", mCharacter->GetStateArray(mCharacterSelect, CharacterState::JumpPunch), true);
+    mDrawComponent->SetAnimFPS(5.0f, "jump_punch");
+    mDrawComponent->AddAnimation("down_punch", mCharacter->GetStateArray(mCharacterSelect, CharacterState::DownPunch), false);
+    mDrawComponent->SetAnimFPS(8.0f, "down_punch");
 
     mDrawComponent->AddAnimation("kick", mCharacter->GetStateArray(mCharacterSelect, CharacterState::Kick), false);
-    mDrawComponent->SetAnimFPS(7.0f, "kick");
-    mDrawComponent->AddAnimation("jump_kick", mCharacter->GetStateArray(mCharacterSelect, CharacterState::JumpKick));
+    mDrawComponent->SetAnimFPS(9.0f, "kick");
+    mDrawComponent->AddAnimation("jump_kick", mCharacter->GetStateArray(mCharacterSelect, CharacterState::JumpKick), false);
     mDrawComponent->SetAnimFPS(6.0f, "jump_kick");
-    mDrawComponent->AddAnimation("down_kick", mCharacter->GetStateArray(mCharacterSelect, CharacterState::DownKick));
-    mDrawComponent->SetAnimFPS(9.0f, "down_kick");
+    mDrawComponent->AddAnimation("down_kick", mCharacter->GetStateArray(mCharacterSelect, CharacterState::DownKick), false);
+    mDrawComponent->SetAnimFPS(8.0f, "down_kick");
 
     mDrawComponent->AddAnimation("basic_damage", mCharacter->GetStateArray(mCharacterSelect, CharacterState::BasicDamage), false);
     mDrawComponent->SetAnimFPS(12.0f, "basic_damage");
+
+    mDrawComponent->AddAnimation("break_block", mCharacter->GetStateArray(mCharacterSelect, CharacterState::BreakBlock), false);
+    mDrawComponent->SetAnimFPS(8.0f, "break_block");
 
     mDrawComponent->AddAnimation("dead", mCharacter->GetStateArray(mCharacterSelect, CharacterState::Dead), false);
     mDrawComponent->AddAnimation("win", mCharacter->GetStateArray(mCharacterSelect, CharacterState::Win), false);
@@ -128,15 +131,11 @@ void Player::OnProcessInput(const uint8_t *state) {
             mIsPunching = true;
             mIsBlocking = false;
             mIsKicking = false;
-        }
-
-        if(mPlayerNumber == 1 && state[SDL_SCANCODE_T] || mPlayerNumber == 2 && state[SDL_SCANCODE_KP_3]) {
+        } else if(mPlayerNumber == 1 && state[SDL_SCANCODE_T] || mPlayerNumber == 2 && state[SDL_SCANCODE_KP_3]) {
             mIsKicking = true;
             mIsBlocking = false;
             mIsPunching = false;
-        }
-
-        if(mPlayerNumber == 1 && state[SDL_SCANCODE_E] || mPlayerNumber == 2 && state[SDL_SCANCODE_KP_1]) {
+        } else if(mPlayerNumber == 1 && state[SDL_SCANCODE_E] || mPlayerNumber == 2 && state[SDL_SCANCODE_KP_1]) {
             mIsBlocking = true;
             mIsPunching = false;
             mIsKicking = false;
@@ -206,7 +205,11 @@ void Player::ManageAnimations() {
         } else {
             if(mIsOnGround) {
                 if(mIsDamage) {
-                    mDrawComponent->SetAnimation("basic_damage");
+                    if(mIsBlocking){
+                        mDrawComponent->SetAnimation("break_block");
+                    } else {
+                        mDrawComponent->SetAnimation("basic_damage");
+                    }
                 } else if(mIsDown) {
                     if(mIsBlocking){
                         mDrawComponent->SetAnimation("down_block");
@@ -301,11 +304,12 @@ void Player::OnCollision(std::unordered_map<CollisionSide, AABBColliderComponent
 }
 
 void Player::ApplyDamage(float damage) {
+    mIsDamage = true;
+
     if(mIsBlocking) {
         this->mHeart -= damage/(float)2.0;
     } else {
         this->mHeart -= damage;
-        mIsDamage = true;
     }
 
     if(this->mHeart == 0.0){

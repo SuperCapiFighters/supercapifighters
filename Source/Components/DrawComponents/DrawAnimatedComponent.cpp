@@ -62,13 +62,12 @@ void DrawAnimatedComponent::Update(float deltaTime) {
     float animSpeed = mAnimSpeeds.find(mAnimName) != mAnimSpeeds.end() ? mAnimSpeeds[mAnimName] : mAnimFPS;
     mAnimTimer += animSpeed * deltaTime;
 
-
     for(int i = 0; i < mAnimations[mAnimName].first.size(); i++) {
         if(mAnimTimer >= mAnimations[mAnimName].first.size()) {
             if(mAnimations[mAnimName].second)
                 mAnimTimer = int(mAnimTimer) - mAnimations[mAnimName].first.size();
             else
-                mAnimTimer = mAnimations[mAnimName].first.size() - 1;
+                mAnimTimer = (float)mAnimations[mAnimName].first.size() - 1;
         }
     }
 }

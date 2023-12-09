@@ -27,19 +27,22 @@ const std::vector<int> Character::GetStateArray(CharacterSelect character, Chara
                 case CharacterState::DownBlock:
                     return {27, 28, 29};
                 case CharacterState::Punch:
-                    return {58, 59, 60, 61};
+                    return {58, 59, 59, 60, 60, 61, 61};
                 case CharacterState::JumpPunch:
                     return {88, 89, 90, 91, 92, 93};
                 case CharacterState::DownPunch:
-                    return {74, 75, 76, 77};
+                    return {74, 75, 75, 76, 76, 77, 77};
                 case CharacterState::Kick:
-                    return {62, 63, 64, 65, 66, 67};
+//                    return {62, 63, 64, 65, 66, 67};
+                    return {110, 111, 112, 113, 114, 114, 115};
                 case CharacterState::JumpKick:
                     return {84, 85, 86, 87};
                 case CharacterState::DownKick:
                     return {78, 79, 80, 81, 82, 83};
                 case CharacterState::BasicDamage:
                     return {232, 233, 234, 235, 234, 233, 232};
+                case CharacterState::BreakBlock:
+                    return {228, 228, 229, 230, 230, 231, 231};
                 case CharacterState::Dead:
 //                    return {268, 269, 270, 271, 272, 273, 274, 274};
                     return {268, 269, 270};
@@ -65,9 +68,10 @@ const std::vector<int> Character::GetStateArray(CharacterSelect character, Chara
                 case CharacterState::DownBlock:
                     return {26, 27, 28};
                 case CharacterState::Punch:
-                    return {59, 60, 61, 62};
+                    return {59, 60, 60, 61, 61, 62, 62};
                 case CharacterState::JumpPunch:
-                    return {89, 90, 91, 92, 93, 94};
+//                    return {89, 90, 91, 92, 93, 94};
+                    return {190, 191, 192, 193, 194, 195};
                 case CharacterState::DownPunch:
                     return {78, 79, 80, 81, 82, 83, 84};
                 case CharacterState::Kick:
@@ -75,9 +79,11 @@ const std::vector<int> Character::GetStateArray(CharacterSelect character, Chara
                 case CharacterState::JumpKick:
                     return {104, 105, 106, 107, 108};
                 case CharacterState::DownKick:
-                    return {74, 75, 76, 77};
+                    return {74, 75, 75, 76, 76, 77, 77};
                 case CharacterState::BasicDamage:
                     return {230, 231, 232, 233, 232, 231, 230};
+                case CharacterState::BreakBlock:
+                    return {218, 219, 219, 220, 220, 221, 221};
                 case CharacterState::Dead:
 //                    return {258, 259, 260, 261, 262, 263, 264, 265};
                     return {258, 259, 260};
