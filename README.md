@@ -2,13 +2,17 @@
 
 [![Review Assignment Due Date](https://classroom.github.com/assets/deadline-readme-button-24ddc0f5d75046c5622901739e7c5dd533143b0c8e959d652212380cedb1ea36.svg)](https://classroom.github.com/a/4inYwXkF)
 
-O Super Capi Fighters é um jogo de luta baseado em personagens do universo de Dragon Ball. Atualmente, há apenas dois personagens, onde o Player 1 (esquerda) irá enfrentar o Player 2 (direita), sendo Goku e Vegeta os personagens disponíveis até então, respectivamente.
+## Objetivo do Jogo
+
+O Super Capi Fighters é um jogo de luta baseado em personagens do universo de Dragon Ball. Atualmente, há apenas dois personagens, onde o Player 1 (esquerda) irá enfrentar o Player 2 (direita), sendo Goku e Vegeta os personagens disponíveis até então.
+
+Como qualquer jogo de luta, o objetivo final é finalizar a barra de vida do oponente antes dele finalizar a sua. Para isso, pode-se utilizar recursos como socos e chutes, além de se defender para evitar tomar o dano completo de um ataque.
 
 ## Mecânicas
 
 ### Movimentação
 
-Um dos pontos implementados a serem testados são as movimentações de ambos os jogadores. Importante pontuar que para simplificar as implementações, optamos por não permitir que o P1 e P2 invertam os lados.
+Um dos pontos implementados a serem testados são as movimentações de ambos os jogadores. Importante pontuar que para simplificar as implementações, optamos por não permitir que o Player 1 e Player 2 invertam os lados.
 
 ### Animação das Sprites
 
