@@ -121,22 +121,25 @@ void Player::OnProcessInput(const uint8_t *state) {
             mIsMoving = false;
         }
 
-        if (mPlayerNumber == 1 && state[SDL_SCANCODE_W] || mPlayerNumber == 2 && state[SDL_SCANCODE_UP]) {
+        if (!mIsJumping && (mPlayerNumber == 1 && state[SDL_SCANCODE_W] || mPlayerNumber == 2 && state[SDL_SCANCODE_UP])) {
             if(mIsOnGround){
                 mRigidBodyComponent->SetVelocity(Vector2(mRigidBodyComponent->GetVelocity().x, mJumpSpeed));
                 mIsOnGround = false;
                 mIsJumping = true;
+                mGame->GetAudio()->PlaySound(mPlayerNumber == 1 ? "GokuJump.wav" : "VegetaJump.wav");
             }
         }
 
-        if(mPlayerNumber == 1 && state[SDL_SCANCODE_R] || mPlayerNumber == 2 && state[SDL_SCANCODE_KP_2]) {
+        if(!mIsPunching && (mPlayerNumber == 1 && state[SDL_SCANCODE_R] || mPlayerNumber == 2 && state[SDL_SCANCODE_KP_2])) {
             mIsPunching = true;
             mIsBlocking = false;
             mIsKicking = false;
-        } else if(mPlayerNumber == 1 && state[SDL_SCANCODE_T] || mPlayerNumber == 2 && state[SDL_SCANCODE_KP_3]) {
+            mGame->GetAudio()->PlaySound(mPlayerNumber == 1 ? "GokuAttack.wav" : "VegetaAttack.wav");
+        } else if(!mIsKicking && (mPlayerNumber == 1 && state[SDL_SCANCODE_T] || mPlayerNumber == 2 && state[SDL_SCANCODE_KP_3])) {
             mIsKicking = true;
             mIsBlocking = false;
             mIsPunching = false;
+            mGame->GetAudio()->PlaySound(mPlayerNumber == 1 ? "GokuAttack.wav" : "VegetaAttack.wav");
         } else if(mPlayerNumber == 1 && state[SDL_SCANCODE_E] || mPlayerNumber == 2 && state[SDL_SCANCODE_KP_1]) {
             mIsBlocking = true;
             mIsPunching = false;
@@ -263,6 +266,14 @@ void Player::Kill() {
 void Player::EndFight(FightStatus fightStatus) {
     if(mFightStatus == FightStatus::Fight) {
         mFightStatus = fightStatus;
+
+        if(fightStatus == FightStatus::Win){
+            if(mPlayerNumber == 1){
+                mGame->GetAudio()->PlaySound("GokuWin.wav");
+            } else if(mPlayerNumber == 2){
+                mGame->GetAudio()->PlaySound("VegetaWin.wav");
+            }
+        }
 
         ColliderLayer layer = mPlayerNumber == 1 ? ColliderLayer::Player1 : ColliderLayer::Player2;
         mMovementColliderComponent = new AABBColliderComponent(this, 0, 0, 200.0f, 400.0f, layer);

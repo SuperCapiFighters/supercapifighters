@@ -12,6 +12,7 @@
 #include "Components/DrawComponents/DrawComponent.h"
 #include "Random.h"
 #include "SDL_image.h"
+#include "SDL_mixer.h"
 #include "Components/DrawComponents/DrawSpriteComponent.h"
 #include <algorithm>
 #include <fstream>
@@ -28,6 +29,11 @@ bool Game::Initialize() {
         return false;
     }
 
+    if (SDL_Init(SDL_INIT_AUDIO) != 0) {
+        SDL_Log("Unable to initialize SDL: %s", SDL_GetError());
+        return false;
+    }
+
     mWindow = SDL_CreateWindow("Super Capi Fighters", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, mWindowWidth, mWindowHeight, SDL_WINDOW_RESIZABLE);
     if (!mWindow) {
         SDL_Log("Failed to create window: %s", SDL_GetError());
@@ -40,9 +46,14 @@ bool Game::Initialize() {
         return false;
     }
 
+    mAudio = new AudioSystem();
+
     Random::Init();
 
     mTicksCount = SDL_GetTicks();
+
+    // Play background music
+    mAudio->PlaySound("MusicLoop.ogg", true);
 
     // Init all game actors
     InitializeActors();
@@ -89,6 +100,8 @@ void Game::ProcessInput() {
 
     const Uint8 *state = SDL_GetKeyboardState(nullptr);
 
+    mAudio->ProcessInput(state);
+
     for (auto actor : mActors) {
         actor->ProcessInput(state);
     }
@@ -104,6 +117,8 @@ void Game::UpdateGame() {
     }
 
     mTicksCount = SDL_GetTicks();
+
+    mAudio->Update(deltaTime);
 
     // Update all actors and pending actors
     UpdateActors(deltaTime);
@@ -235,6 +250,8 @@ void Game::Shutdown() {
     while (!mActors.empty()) {
         delete mActors.back();
     }
+
+    delete mAudio;
 
     SDL_DestroyRenderer(mRenderer);
     SDL_DestroyWindow(mWindow);
