@@ -1,6 +1,18 @@
 # Super Capi Fighters
 
-[![Review Assignment Due Date](https://classroom.github.com/assets/deadline-readme-button-24ddc0f5d75046c5622901739e7c5dd533143b0c8e959d652212380cedb1ea36.svg)](https://classroom.github.com/a/4inYwXkF)
+![Logo](https://drive.google.com/uc?id=1RSpr67LFWhj-3PNCpu9DjL18iuv_TO1x)
+
+## Sobre nós
+
+### Desenvolvedores
+
+O jogo em questão foi desenvolvido pelos alunos José Júlio Alves Campolina, Lucas Vieira dos Santos e Samuel Raimundo Lopes Pinto.
+
+### Motivação
+
+Trata-se do trabalho final da disciplina INF 216 - Projeto e Implementação de Jogos Digitais, ofertada como disciplina optativa no segundo semestre do ano de 2023 no curso de Ciência da Computação da Universidade Federal de Viçosa.
+
+A disciplina foi ministrada pelo professor Lucas Nascimento Ferreira
 
 ## Objetivo do Jogo
 
@@ -9,6 +21,8 @@ O Super Capi Fighters é um jogo de luta baseado em personagens do universo de D
 Como qualquer jogo de luta, o objetivo final é finalizar a barra de vida do oponente antes dele finalizar a sua. Para isso, pode-se utilizar recursos como socos e chutes, além de se defender para evitar tomar o dano completo de um ataque.
 
 ## Mecânicas
+
+![Mecânica](https://drive.google.com/uc?id=1MorWlAphH-L7MGpITEdbidw2m6LEhC2S)
 
 ### Movimentação
 
