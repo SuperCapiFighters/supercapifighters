@@ -30,7 +30,7 @@ Player::Player(Game *game, Vector2 position, int playerNumber, CharacterSelect c
           mHeart(heart),
           mFightStatus(FightStatus::Fight) {
 
-    mRigidBodyComponent = new RigidBodyComponent(this, 1.0f, 2.5f);
+    mRigidBodyComponent = new RigidBodyComponent(this, 1.25f, 2.0f);
     const float width = 200.0f;
     const float height = 320.0f;
 
@@ -56,45 +56,44 @@ Player::Player(Game *game, Vector2 position, int playerNumber, CharacterSelect c
     mDrawComponent = new DrawAnimatedComponent(this, mCharacter->GetCharacterSpriteSheetPath(mCharacterSelect), mCharacter->GetCharacterSpriteSheetJSON(mCharacterSelect));
 
     mDrawComponent->AddAnimation("idle", mCharacter->GetStateArray(mCharacterSelect, CharacterState::Idle));
-    mDrawComponent->AddAnimation("move", mCharacter->GetStateArray(mCharacterSelect, CharacterState::Move));
-
-    mDrawComponent->AddAnimation("jump", mCharacter->GetStateArray(mCharacterSelect, CharacterState::Jump));
-    mDrawComponent->SetAnimFPS(10.0f, "jump");
-
-    mDrawComponent->AddAnimation("down", mCharacter->GetStateArray(mCharacterSelect, CharacterState::Down), false);
-    mDrawComponent->SetAnimFPS(10.0f, "down");
-
     mDrawComponent->AddAnimation("block", mCharacter->GetStateArray(mCharacterSelect, CharacterState::Block), false);
     mDrawComponent->AddAnimation("jump_block", mCharacter->GetStateArray(mCharacterSelect, CharacterState::JumpBlock), false);
     mDrawComponent->AddAnimation("down_block", mCharacter->GetStateArray(mCharacterSelect, CharacterState::DownBlock), false);
-
-    mDrawComponent->AddAnimation("punch", mCharacter->GetStateArray(mCharacterSelect, CharacterState::Punch), true);
-    mDrawComponent->SetAnimFPS(8.0f, "punch");
-    mDrawComponent->AddAnimation("jump_punch", mCharacter->GetStateArray(mCharacterSelect, CharacterState::JumpPunch), true);
-    mDrawComponent->SetAnimFPS(5.0f, "jump_punch");
-    mDrawComponent->AddAnimation("down_punch", mCharacter->GetStateArray(mCharacterSelect, CharacterState::DownPunch), false);
-    mDrawComponent->SetAnimFPS(8.0f, "down_punch");
-
-    mDrawComponent->AddAnimation("kick", mCharacter->GetStateArray(mCharacterSelect, CharacterState::Kick), false);
-    mDrawComponent->SetAnimFPS(9.0f, "kick");
-    mDrawComponent->AddAnimation("jump_kick", mCharacter->GetStateArray(mCharacterSelect, CharacterState::JumpKick), false);
-    mDrawComponent->SetAnimFPS(6.0f, "jump_kick");
-    mDrawComponent->AddAnimation("down_kick", mCharacter->GetStateArray(mCharacterSelect, CharacterState::DownKick), false);
-    mDrawComponent->SetAnimFPS(8.0f, "down_kick");
-
-    mDrawComponent->AddAnimation("basic_damage", mCharacter->GetStateArray(mCharacterSelect, CharacterState::BasicDamage), false);
-    mDrawComponent->SetAnimFPS(12.0f, "basic_damage");
-
-    mDrawComponent->AddAnimation("break_block", mCharacter->GetStateArray(mCharacterSelect, CharacterState::BreakBlock), false);
-    mDrawComponent->SetAnimFPS(8.0f, "break_block");
-
     mDrawComponent->AddAnimation("dead", mCharacter->GetStateArray(mCharacterSelect, CharacterState::Dead), false);
     mDrawComponent->AddAnimation("win", mCharacter->GetStateArray(mCharacterSelect, CharacterState::Win), false);
     mDrawComponent->AddAnimation("lose", mCharacter->GetStateArray(mCharacterSelect, CharacterState::Lose), false);
-    mDrawComponent->SetAnimation("idle");
+    mDrawComponent->AddAnimation("down", mCharacter->GetStateArray(mCharacterSelect, CharacterState::Down), false);
+    mDrawComponent->AddAnimation("jump", mCharacter->GetStateArray(mCharacterSelect, CharacterState::Jump), true);
+    mDrawComponent->SetAnimFPS(8.0f);
 
-    // Default AnimSpeed
-    mDrawComponent->SetAnimFPS(7.0f);
+    mDrawComponent->AddAnimation("move", mCharacter->GetStateArray(mCharacterSelect, CharacterState::Move));
+    mDrawComponent->SetAnimFPS(18.0f, "move");
+
+    mDrawComponent->AddAnimation("basic_damage", mCharacter->GetStateArray(mCharacterSelect, CharacterState::BasicDamage), true);
+    mDrawComponent->SetAnimFPS(12.0f, "basic_damage");
+
+    mDrawComponent->AddAnimation("break_block", mCharacter->GetStateArray(mCharacterSelect, CharacterState::BreakBlock), true);
+    mDrawComponent->SetAnimFPS(10.0f, "break_block");
+
+    mDrawComponent->AddAnimation("punch", mCharacter->GetStateArray(mCharacterSelect, CharacterState::Punch), true);
+    mDrawComponent->SetAnimFPS(12.0f, "punch");
+
+    mDrawComponent->AddAnimation("down_punch", mCharacter->GetStateArray(mCharacterSelect, CharacterState::DownPunch), true);
+    mDrawComponent->SetAnimFPS(12.0f, "down_punch");
+
+    mDrawComponent->AddAnimation("jump_punch", mCharacter->GetStateArray(mCharacterSelect, CharacterState::JumpPunch), true);
+    mDrawComponent->SetAnimFPS(14.0f, "jump_punch");
+
+    mDrawComponent->AddAnimation("kick", mCharacter->GetStateArray(mCharacterSelect, CharacterState::Kick), true);
+    mDrawComponent->SetAnimFPS(9.0f, "kick");
+
+    mDrawComponent->AddAnimation("down_kick", mCharacter->GetStateArray(mCharacterSelect, CharacterState::DownKick), true);
+    mDrawComponent->SetAnimFPS(9.0f, "down_kick");
+
+    mDrawComponent->AddAnimation("jump_kick", mCharacter->GetStateArray(mCharacterSelect, CharacterState::JumpKick), true);
+    mDrawComponent->SetAnimFPS(9.0f, "jump_kick");
+
+
 }
 
 void Player::OnProcessInput(const uint8_t *state) {
@@ -105,15 +104,18 @@ void Player::OnProcessInput(const uint8_t *state) {
             return;
 
 
-        if (mPlayerNumber == 1 && state[SDL_SCANCODE_D] || mPlayerNumber == 2 && state[SDL_SCANCODE_RIGHT]) {
-            mRigidBodyComponent->ApplyForce(Vector2(mForwardSpeed, 0.0f));
-            mIsMoving = true;
+        if(!mIsDown){
+            if (mPlayerNumber == 1 && state[SDL_SCANCODE_D] || mPlayerNumber == 2 && state[SDL_SCANCODE_RIGHT]) {
+                mRigidBodyComponent->ApplyForce(Vector2(mForwardSpeed, 0.0f));
+                mIsMoving = true;
+            }
+
+            if (mPlayerNumber == 1 && state[SDL_SCANCODE_A] || mPlayerNumber == 2 && state[SDL_SCANCODE_LEFT]) {
+                mRigidBodyComponent->ApplyForce(Vector2(-mForwardSpeed, 0.0f));
+                mIsMoving = true;
+            }
         }
 
-        if (mPlayerNumber == 1 && state[SDL_SCANCODE_A] || mPlayerNumber == 2 && state[SDL_SCANCODE_LEFT]) {
-            mRigidBodyComponent->ApplyForce(Vector2(-mForwardSpeed, 0.0f));
-            mIsMoving = true;
-        }
 
         if (mPlayerNumber == 1 && !state[SDL_SCANCODE_D] && !state[SDL_SCANCODE_A] || mPlayerNumber == 2 && !state[SDL_SCANCODE_RIGHT] && !state[SDL_SCANCODE_LEFT]) {
             mIsMoving = false;
@@ -154,13 +156,13 @@ void Player::OnUpdate(float deltaTime) {
     if (mIsPunching) {
         mPunchColliderComponent->SetEnabled(true);
         mDrawPunchComponent->setIsDraw(true);
-        this->StopAnimationTimer(deltaTime, 0.40f, "punch");
+            this->StopAnimationTimer(deltaTime, 0.45f, "punch");
     } else if (mIsKicking) {
         mPunchColliderComponent->SetEnabled(true);
         mDrawPunchComponent->setIsDraw(true);
         this->StopAnimationTimer(deltaTime, 0.40f, "kick");
     } else if (mIsDamage) {
-        this->StopAnimationTimer(deltaTime, 0.45f, "damage");
+        this->StopAnimationTimer(deltaTime, 0.80f, "damage");
         mAnimationTimer += deltaTime;
     } else if (mIsDead) {
         mAnimationTimer += deltaTime;
