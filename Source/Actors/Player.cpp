@@ -34,20 +34,20 @@ Player::Player(Game *game, Vector2 position, int playerNumber, CharacterSelect c
     const float width = 200.0f;
     const float height = 320.0f;
 
-    mDrawPolygonComponent = new DrawPolygonComponent(this,0,0, width, height);
+//    mDrawPolygonComponent = new DrawPolygonComponent(this,0,0, width, height);
 
     if(mPlayerNumber == 2){
         mMovementColliderComponent = new AABBColliderComponent(this, 0, 0, width, height, ColliderLayer::Player2);
         mPunchColliderComponent = new AABBColliderComponent(this,-65,55,-200,50,ColliderLayer::Punch);
-        mDrawPunchComponent = new DrawPolygonComponent(this,-205,55,-50,50);
+//        mDrawPunchComponent = new DrawPolygonComponent(this,-205,55,-50,50);
     }else{
         mMovementColliderComponent = new AABBColliderComponent(this, 0, 0, width, height, ColliderLayer::Player1);
         mPunchColliderComponent = new AABBColliderComponent(this,200,55,200,50,ColliderLayer::Punch);
-        mDrawPunchComponent = new DrawPolygonComponent(this,205,55,50,50);
+//        mDrawPunchComponent = new DrawPolygonComponent(this,205,55,50,50);
     }
 
     mPunchColliderComponent->SetEnabled(false);
-    mDrawPunchComponent->setIsDraw(false);
+//    mDrawPunchComponent->setIsDraw(false);
 
     mRotation = mPlayerNumber == 1 ? Math::Pi : 0.0f;
 
@@ -158,11 +158,11 @@ void Player::OnProcessInput(const uint8_t *state) {
 void Player::OnUpdate(float deltaTime) {
     if (mIsPunching) {
         mPunchColliderComponent->SetEnabled(true);
-        mDrawPunchComponent->setIsDraw(true);
+//        mDrawPunchComponent->setIsDraw(true);
             this->StopAnimationTimer(deltaTime, 0.45f, "punch");
     } else if (mIsKicking) {
         mPunchColliderComponent->SetEnabled(true);
-        mDrawPunchComponent->setIsDraw(true);
+//        mDrawPunchComponent->setIsDraw(true);
         this->StopAnimationTimer(deltaTime, 0.40f, "kick");
     } else if (mIsDamage) {
         this->StopAnimationTimer(deltaTime, 0.80f, "damage");
@@ -174,7 +174,7 @@ void Player::OnUpdate(float deltaTime) {
         }
     } else {
         mPunchColliderComponent->SetEnabled(false);
-        mDrawPunchComponent->setIsDraw(false);
+//        mDrawPunchComponent->setIsDraw(false);
     }
 
 
