@@ -37,17 +37,17 @@ Player::Player(Scene *scene, Vector2 position, int playerNumber, CharacterSelect
 
     if(mPlayerNumber == 2){
         mMovementColliderComponent = new AABBColliderComponent(this, 0, 0, width, height, ColliderLayer::Player2);
-        // mPunchColliderComponent = new AABBColliderComponent(this,-65,55,-200,50,ColliderLayer::Punch);
-        mDrawPunchComponent = new DrawPolygonComponent(this,-205,55,-50,50);
+         mPunchColliderComponent = new AABBColliderComponent(this,-65,55,-200,50,ColliderLayer::Punch);
+//        mDrawPunchComponent = new DrawPolygonComponent(this,-205,55,-50,50);
         mDrawHealthBar = new DrawHealthBar(this,true,10+ mScene->GetGame()->GetWindowWidth()/2,10, mScene->GetGame()->GetWindowWidth()/2-20,20);
     }else{
         mMovementColliderComponent = new AABBColliderComponent(this, 0, 0, width, height, ColliderLayer::Player1);
-        // mPunchColliderComponent = new AABBColliderComponent(this,200,55,200,50,ColliderLayer::Punch);
-        mDrawPunchComponent = new DrawPolygonComponent(this,205,55,50,50);
+         mPunchColliderComponent = new AABBColliderComponent(this,200,55,200,50,ColliderLayer::Punch);
+//        mDrawPunchComponent = new DrawPolygonComponent(this,205,55,50,50);
         mDrawHealthBar = new DrawHealthBar(this,false,10,10, mScene->GetGame()->GetWindowWidth()/2-20,20);
     }
 
-    // mPunchColliderComponent->SetEnabled(false);
+     mPunchColliderComponent->SetEnabled(false);
 //    mDrawPunchComponent->setIsDraw(false);
 
     mRotation = mPlayerNumber == 1 ? Math::Pi : 0.0f;
