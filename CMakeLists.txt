@@ -5,8 +5,8 @@ set(CMAKE_CXX_STANDARD 17)
 # INIT NO SCREEN BUGFIX
 # Em alguns casos, o programa pode não renderizar a tela. Por isso temos
 # as seguintes linhas. Caso encontre algum problema, comente-as.
-#set(CMAKE_SKIP_RPATH ON)
-#set(CMAKE_SKIP_RPATH ON CACHE BOOL "Skip RPATH" FORCE)
+set(CMAKE_SKIP_RPATH ON)
+set(CMAKE_SKIP_RPATH ON CACHE BOOL "Skip RPATH" FORCE)
 # END NO SCREEN BUGFIX
 ####### DO NOT EDIT ABOVE
 
@@ -47,6 +47,8 @@ add_executable(${PROJECT_NAME}
         Source/Scenes/Scene.h
         Source/Scenes/Overworld.cpp
         Source/Scenes/Overworld.h
+        Source/Components/DrawComponents/DrawHealthBar.cpp
+        Source/Components/DrawComponents/DrawHealthBar.h
 )
 
 ####### DO NOT EDIT BELLOW

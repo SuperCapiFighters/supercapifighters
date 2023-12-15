@@ -9,6 +9,7 @@
 #include "Actor.h"
 #include "Utils/Character.h"
 
+
 enum class FightStatus {
     Fight,
     Win,
@@ -28,6 +29,8 @@ public:
     void EndFight();
     void StopAnimationTimer(float deltaTime, float animationTime, std::string variable);
 
+
+
 private:
     void ManageAnimations();
 
@@ -38,6 +41,8 @@ private:
     class AABBColliderComponent* mPunchColliderComponent;
     class DrawPolygonComponent* mDrawPolygonComponent;
     class DrawPolygonComponent* mDrawPunchComponent;
+    class DrawHealthBar* mDrawHealthBar;
+
 
     float mForwardSpeed;
     float mJumpSpeed;
@@ -60,7 +65,8 @@ private:
     int mPlayerNumber;
     Character* mCharacter;
     CharacterSelect mCharacterSelect;
-    float mHeart;
+//    float mHeart;
+//    float mMaxHeart;
 };
 
 
