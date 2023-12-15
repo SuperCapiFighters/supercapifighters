@@ -24,8 +24,8 @@ void Menu::Load()
     int width = mGame->GetWindowWidth();
     int height = mGame->GetWindowHeight();
 
-    new DrawSpriteComponent(background, "../Assets/Sprites/Menu/Background.png", width, height);
-    new DrawSpriteComponent(background, "../Assets/Sprites/Menu/Title.png", width/2, height/2);
+    new DrawSpriteComponent(background, "../Assets/Sprites/Menu/GameBackground.png", width, height);
+//    new DrawSpriteComponent(background, "../Assets/Sprites/Menu/Title.jpg", 1024, 1024);
 
     // Press Space label
     auto *pressSpace = new Actor(this);
