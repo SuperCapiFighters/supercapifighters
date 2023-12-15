@@ -1,12 +1,14 @@
 cmake_minimum_required(VERSION 3.26)
 # Configurando o padrão c++
-set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD 17)
 
 # INIT NO SCREEN BUGFIX
 # Em alguns casos, o programa pode não renderizar a tela. Por isso temos
 # as seguintes linhas. Caso encontre algum problema, comente-as.
-set(CMAKE_SKIP_RPATH ON)
+#set(CMAKE_SKIP_RPATH ON CACHE BOO
+#set(CMAKE_SKIP_RPATH ON)L "Skip RPATH" FORCE)
 set(CMAKE_SKIP_RPATH ON CACHE BOOL "Skip RPATH" FORCE)
+
 # END NO SCREEN BUGFIX
 ####### DO NOT EDIT ABOVE
 
@@ -39,6 +41,8 @@ add_executable(${PROJECT_NAME}
         Source/Actors/Player.h
         Source/Actors/Utils/Character.cpp
         Source/Actors/Utils/Character.h
+        Source/Components/DrawComponents/DrawHealthBar.cpp
+        Source/Components/DrawComponents/DrawHealthBar.h
 )
 
 ####### DO NOT EDIT BELLOW

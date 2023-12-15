@@ -8,11 +8,12 @@
 #include "../Components/DrawComponents/DrawPolygonComponent.h"
 #include "../Components/RigidBodyComponent.h"
 #include "../Game.h"
+#include "../Components/DrawComponents/DrawHealthBar.h"
 
 #define FLOOR_HEIGHT 50.0f
 
 Player::Player(Game *game, Vector2 position, int playerNumber, CharacterSelect characterSelect,float heart, float forwardSpeed, float jumpSpeed)
-        : Actor(game, position),
+        : Actor(game,heart, position),
           mPlayerNumber(playerNumber),
           mCharacterSelect(characterSelect),
           mForwardSpeed(forwardSpeed),
@@ -27,7 +28,8 @@ Player::Player(Game *game, Vector2 position, int playerNumber, CharacterSelect c
           mIsMoving(false),
           mIsDamage(false),
           mAnimationTimer(0.0f),
-          mHeart(heart),
+//          mHeart(heart),
+//          mMaxHeart(heart),
           mFightStatus(FightStatus::Fight) {
 
     mRigidBodyComponent = new RigidBodyComponent(this, 1.25f, 2.0f);
@@ -40,10 +42,12 @@ Player::Player(Game *game, Vector2 position, int playerNumber, CharacterSelect c
         mMovementColliderComponent = new AABBColliderComponent(this, 0, 0, width, height, ColliderLayer::Player2);
         mPunchColliderComponent = new AABBColliderComponent(this,-65,55,-200,50,ColliderLayer::Punch);
         mDrawPunchComponent = new DrawPolygonComponent(this,-205,55,-50,50);
+        mDrawHealthBar = new DrawHealthBar(this,true,10+GetGame()->GetWindowWidth()/2,10,GetGame()->GetWindowWidth()/2-20,20);
     }else{
         mMovementColliderComponent = new AABBColliderComponent(this, 0, 0, width, height, ColliderLayer::Player1);
         mPunchColliderComponent = new AABBColliderComponent(this,200,55,200,50,ColliderLayer::Punch);
         mDrawPunchComponent = new DrawPolygonComponent(this,205,55,50,50);
+        mDrawHealthBar = new DrawHealthBar(this,false,10,10,GetGame()->GetWindowWidth()/2-20,20);
     }
 
     mPunchColliderComponent->SetEnabled(false);
@@ -307,14 +311,16 @@ void Player::OnCollision(std::unordered_map<CollisionSide, AABBColliderComponent
 
 void Player::ApplyDamage(float damage) {
     mIsDamage = true;
+//    printf("%f\n",mHeart);
 
     if(mIsBlocking) {
-        this->mHeart -= damage/(float)2.0;
+        mHeart -= damage/(float)2.0;
     } else {
-        this->mHeart -= damage;
+        mHeart -= damage;
     }
+//    printf("%f\n",mHeart);
 
-    if(this->mHeart == 0.0){
+    if(mHeart == 0.0){
         mIsDead = true;
         Kill();
     }
