@@ -3,16 +3,13 @@
 //
 
 #include "Player.h"
-#include "../Components/ColliderComponents/AABBColliderComponent.h"
 #include "../Components/DrawComponents/DrawAnimatedComponent.h"
 #include "../Components/DrawComponents/DrawPolygonComponent.h"
-#include "../Components/RigidBodyComponent.h"
-#include "../Game.h"
 
 #define FLOOR_HEIGHT 50.0f
 
-Player::Player(Game *game, Vector2 position, int playerNumber, CharacterSelect characterSelect,float heart, float forwardSpeed, float jumpSpeed)
-        : Actor(game, position),
+Player::Player(Scene *scene, Vector2 position, int playerNumber, CharacterSelect characterSelect,float heart, float forwardSpeed, float jumpSpeed)
+        : Actor(scene, position),
           mPlayerNumber(playerNumber),
           mCharacterSelect(characterSelect),
           mForwardSpeed(forwardSpeed),
@@ -126,7 +123,7 @@ void Player::OnProcessInput(const uint8_t *state) {
                 mRigidBodyComponent->SetVelocity(Vector2(mRigidBodyComponent->GetVelocity().x, mJumpSpeed));
                 mIsOnGround = false;
                 mIsJumping = true;
-                mGame->GetAudio()->PlaySound(mPlayerNumber == 1 ? "GokuJump.wav" : "VegetaJump.wav");
+                mScene->GetGame()->GetAudio()->PlaySound(mPlayerNumber == 1 ? "GokuJump.wav" : "VegetaJump.wav");
             }
         }
 
@@ -134,12 +131,12 @@ void Player::OnProcessInput(const uint8_t *state) {
             mIsPunching = true;
             mIsBlocking = false;
             mIsKicking = false;
-            mGame->GetAudio()->PlaySound(mPlayerNumber == 1 ? "GokuAttack.wav" : "VegetaAttack.wav");
+            mScene->GetGame()->GetAudio()->PlaySound(mPlayerNumber == 1 ? "GokuAttack.wav" : "VegetaAttack.wav");
         } else if(!mIsKicking && (mPlayerNumber == 1 && state[SDL_SCANCODE_T] || mPlayerNumber == 2 && state[SDL_SCANCODE_KP_3])) {
             mIsKicking = true;
             mIsBlocking = false;
             mIsPunching = false;
-            mGame->GetAudio()->PlaySound(mPlayerNumber == 1 ? "GokuAttack.wav" : "VegetaAttack.wav");
+            mScene->GetGame()->GetAudio()->PlaySound(mPlayerNumber == 1 ? "GokuAttack.wav" : "VegetaAttack.wav");
         } else if(mPlayerNumber == 1 && state[SDL_SCANCODE_E] || mPlayerNumber == 2 && state[SDL_SCANCODE_KP_1]) {
             mIsBlocking = true;
             mIsPunching = false;
@@ -170,7 +167,7 @@ void Player::OnUpdate(float deltaTime) {
     } else if (mIsDead) {
         mAnimationTimer += deltaTime;
         if (mAnimationTimer >= 1.5f) {
-            mGame->EndFight(this);
+            mScene->EndFight();
         }
     } else {
         mPunchColliderComponent->SetEnabled(false);
@@ -178,14 +175,14 @@ void Player::OnUpdate(float deltaTime) {
     }
 
 
-    if (mRigidBodyComponent->GetOwner()->GetPosition().x - mMovementColliderComponent->GetWidth() /2 < mGame->GetCameraPos().x)
-        mRigidBodyComponent->GetOwner()->SetPosition(Vector2(mGame->GetCameraPos().x + mMovementColliderComponent->GetWidth() /2, mRigidBodyComponent->GetOwner()->GetPosition().y));
+    if (mRigidBodyComponent->GetOwner()->GetPosition().x - mMovementColliderComponent->GetWidth() /2 < mScene->GetGame()->GetCameraPos().x)
+        mRigidBodyComponent->GetOwner()->SetPosition(Vector2(mScene->GetGame()->GetCameraPos().x + mMovementColliderComponent->GetWidth() /2, mRigidBodyComponent->GetOwner()->GetPosition().y));
 
-    if (mRigidBodyComponent->GetOwner()->GetPosition().x + mMovementColliderComponent->GetWidth()/2 > mGame->GetWindowWidth())
-        mRigidBodyComponent->GetOwner()->SetPosition(Vector2(mGame->GetWindowWidth() - mMovementColliderComponent->GetWidth()/2, mRigidBodyComponent->GetOwner()->GetPosition().y));
+    if (mRigidBodyComponent->GetOwner()->GetPosition().x + mMovementColliderComponent->GetWidth()/2 > mScene->GetGame()->GetWindowWidth())
+        mRigidBodyComponent->GetOwner()->SetPosition(Vector2(mScene->GetGame()->GetWindowWidth() - mMovementColliderComponent->GetWidth()/2, mRigidBodyComponent->GetOwner()->GetPosition().y));
 
-    if (mRigidBodyComponent->GetOwner()->GetPosition().y + mMovementColliderComponent->GetHeight()/2 > mGame->GetWindowHeight() - FLOOR_HEIGHT){
-        mRigidBodyComponent->GetOwner()->SetPosition(Vector2(mRigidBodyComponent->GetOwner()->GetPosition().x, mGame->GetWindowHeight() - mMovementColliderComponent->GetHeight()/2 - FLOOR_HEIGHT));
+    if (mRigidBodyComponent->GetOwner()->GetPosition().y + mMovementColliderComponent->GetHeight()/2 > mScene->GetGame()->GetWindowHeight() - FLOOR_HEIGHT){
+        mRigidBodyComponent->GetOwner()->SetPosition(Vector2(mRigidBodyComponent->GetOwner()->GetPosition().x, mScene->GetGame()->GetWindowHeight() - mMovementColliderComponent->GetHeight()/2 - FLOOR_HEIGHT));
         mIsOnGround = true;
         mIsJumping = false;
     }
@@ -263,15 +260,15 @@ void Player::Kill() {
     mMovementColliderComponent->SetEnabled(false);
 }
 
-void Player::EndFight(FightStatus fightStatus) {
+void Player::EndFight() {
     if(mFightStatus == FightStatus::Fight) {
-        mFightStatus = fightStatus;
+        mFightStatus = mHeart <= 0.0f ? FightStatus::Lose : FightStatus::Win;
 
-        if(fightStatus == FightStatus::Win){
+        if(mFightStatus == FightStatus::Win){
             if(mPlayerNumber == 1){
-                mGame->GetAudio()->PlaySound("GokuWin.wav");
+                mScene->GetGame()->GetAudio()->PlaySound("GokuWin.wav");
             } else if(mPlayerNumber == 2){
-                mGame->GetAudio()->PlaySound("VegetaWin.wav");
+                mScene->GetGame()->GetAudio()->PlaySound("VegetaWin.wav");
             }
         }
 
@@ -279,7 +276,7 @@ void Player::EndFight(FightStatus fightStatus) {
         mMovementColliderComponent = new AABBColliderComponent(this, 0, 0, 200.0f, 400.0f, layer);
         mMovementColliderComponent->SetEnabled(false);
 
-        Vector2 position = mPlayerNumber == 1 ? Vector2(300.0f,mGame->GetWindowHeight() - 600.0f) : Vector2(mGame->GetWindowWidth() - 300.0f,mGame->GetWindowHeight() - 600.0f);
+        Vector2 position = mPlayerNumber == 1 ? Vector2(300.0f,mScene->GetGame()->GetWindowHeight() - 600.0f) : Vector2(mScene->GetGame()->GetWindowWidth() - 300.0f,mScene->GetGame()->GetWindowHeight() - 600.0f);
         this->SetPosition(position);
     }
 }

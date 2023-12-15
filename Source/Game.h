@@ -16,6 +16,11 @@
 class Game
 {
 public:
+    enum class GameScene
+    {
+        Menu,
+        Overworld
+    };
     Game(int windowWidth, int windowHeight);
 
     bool Initialize();
@@ -41,6 +46,8 @@ public:
     Vector2& GetCameraPos() { return mCameraPos; };
     void SetCameraPos(const Vector2& position) { mCameraPos = position; };
 
+    void SetScene(GameScene gameState);
+
     // Window functions
     int GetWindowWidth() const { return mWindowWidth; }
     int GetWindowHeight() const { return mWindowHeight; }
@@ -49,17 +56,14 @@ public:
 
     SDL_Texture* LoadTexture(const std::string& texturePath);
 
-    // Game-specific
-    void EndFight(class Player* loser);
-
 private:
     void ProcessInput();
     void UpdateGame();
     void UpdateCamera();
     void GenerateOutput();
 
-    // Game-specific
-    void LoadLevel();
+    // Unload actors for scene transition
+    void UnloadActors();
 
     // All the actors in the game
     std::vector<class Actor*> mActors;
@@ -89,7 +93,6 @@ private:
 
     Vector2 mCameraPos;
 
-    // Game-specific
-    class Player *mPlayer1;
-    class Player *mPlayer2;
+    GameScene mGameState;
+    class Scene *mScene;
 };

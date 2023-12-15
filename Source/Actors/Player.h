@@ -17,7 +17,7 @@ enum class FightStatus {
 
 class Player: public Actor {
 public:
-    explicit Player(Game* game, Vector2 position, int playerNumber, CharacterSelect characterSelect, float heart = 100.0f, float forwardSpeed = 1000.0f, float jumpSpeed = -1000.0f);
+    explicit Player(Scene* scene, Vector2 position, int playerNumber, CharacterSelect characterSelect, float heart = 100.0f, float forwardSpeed = 1000.0f, float jumpSpeed = -1000.0f);
 
     void OnProcessInput(const Uint8* keyState) override;
     void OnUpdate(float deltaTime) override;
@@ -25,7 +25,7 @@ public:
     void ApplyDamage(float damage) override;
 
     void Kill() override;
-    void EndFight(FightStatus fightStatus);
+    void EndFight();
     void StopAnimationTimer(float deltaTime, float animationTime, std::string variable);
 
 private:

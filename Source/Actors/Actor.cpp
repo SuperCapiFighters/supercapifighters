@@ -1,7 +1,7 @@
 // ----------------------------------------------------------------
 // From Game Programming in C++ by Sanjay Madhav
 // Copyright (C) 2017 Sanjay Madhav. All rights reserved.
-// 
+//
 // Released under the BSD License
 // See LICENSE in root directory for full details.
 // ----------------------------------------------------------------
@@ -11,19 +11,19 @@
 #include "../Components/Component.h"
 #include <algorithm>
 
-Actor::Actor(Game* game, Vector2 position)
+Actor::Actor(Scene* scene, Vector2 position)
         : mState(ActorState::Active)
         , mPosition(position)
         , mScale(1.0f)
         , mRotation(0.0f)
-        , mGame(game)
+        , mScene(scene)
 {
-    mGame->AddActor(this);
+    mScene->GetGame()->AddActor(this);
 }
 
 Actor::~Actor()
 {
-    mGame->RemoveActor(this);
+    mScene->GetGame()->RemoveActor(this);
 
     for(auto component : mComponents)
     {

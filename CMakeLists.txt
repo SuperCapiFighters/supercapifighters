@@ -41,6 +41,12 @@ add_executable(${PROJECT_NAME}
         Source/Actors/Utils/Character.h
         Source/AudioSystem.h
         Source/AudioSystem.cpp
+        Source/Scenes/Menu.cpp
+        Source/Scenes/Menu.h
+        Source/Scenes/Scene.cpp
+        Source/Scenes/Scene.h
+        Source/Scenes/Overworld.cpp
+        Source/Scenes/Overworld.h
 )
 
 ####### DO NOT EDIT BELLOW

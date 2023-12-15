@@ -8,19 +8,20 @@
 
 #include "Game.h"
 #include "Actors/Actor.h"
+#include "Actors/Player.h"
 #include "Components/ColliderComponents/AABBColliderComponent.h"
 #include "Components/DrawComponents/DrawComponent.h"
 #include "Random.h"
 #include "SDL_image.h"
 #include "SDL_mixer.h"
-#include "Components/DrawComponents/DrawSpriteComponent.h"
+#include "Scenes/Menu.h"
+#include "Scenes/Overworld.h"
 #include <algorithm>
 #include <fstream>
 #include <vector>
-#include "Actors/Player.h"
 
 Game::Game(int windowWidth, int windowHeight)
-    : mWindow(nullptr), mRenderer(nullptr), mTicksCount(0), mIsRunning(true), mUpdatingActors(false), mWindowWidth(windowWidth), mWindowHeight(windowHeight) {
+    : mWindow(nullptr), mRenderer(nullptr), mTicksCount(0), mIsRunning(true), mUpdatingActors(false), mWindowWidth(windowWidth), mWindowHeight(windowHeight),mGameState(GameScene::Menu) {
 }
 
 bool Game::Initialize() {
@@ -62,22 +63,29 @@ bool Game::Initialize() {
 }
 
 void Game::InitializeActors() {
-    LoadLevel();
+    switch (mGameState) {
+        case GameScene::Menu:
+            mScene = new Menu(this);
+            mScene->Load();
+            break;
 
-    Vector2 player1Position = Vector2(300.0f,mWindowHeight - 32.0f - 330.0f);
-    Vector2 player2Position = Vector2(mWindowWidth - 300.0f,mWindowHeight - 32.0f - 330.0f);
-
-    mPlayer2 = new Player(this, player2Position, 2, CharacterSelect::Vegeta);
-    mPlayer2->SetPosition(player2Position);
-    mPlayer1 = new Player(this, player1Position, 1, CharacterSelect::Goku);
-    mPlayer1->SetPosition(player1Position);
+        case GameScene::Overworld:
+            mScene = new Overworld(this);
+            mScene->Load();
+            break;
+        default:
+            break;
+        }
 }
 
-void Game::LoadLevel() {
-    // Add background image located at Assets/Levels/Arena.png
-    auto* background = new Actor(this);
-    background->SetPosition(Vector2(0.0f, 0.0f));
-    new DrawSpriteComponent(background, "../Assets/Sprites/Background.jpg", mWindowWidth, mWindowHeight);
+void Game::SetScene(GameScene gameState) {
+    // Stop all sounds
+    mAudio->StopAllSounds();
+
+    // Handle scene transition
+    mGameState = gameState;
+    UnloadActors();
+    InitializeActors();
 }
 
 void Game::RunLoop() {
@@ -101,6 +109,7 @@ void Game::ProcessInput() {
     const Uint8 *state = SDL_GetKeyboardState(nullptr);
 
     mAudio->ProcessInput(state);
+    mScene->ProcessInput(state);
 
     for (auto actor : mActors) {
         actor->ProcessInput(state);
@@ -128,7 +137,6 @@ void Game::UpdateGame() {
 }
 
 void Game::UpdateCamera() {
-
 }
 
 void Game::UpdateActors(float deltaTime) {
@@ -218,14 +226,12 @@ void Game::GenerateOutput() {
     SDL_RenderPresent(mRenderer);
 }
 
-void Game::EndFight(Player *loser) {
-    if(loser == mPlayer1) {
-        mPlayer2->EndFight(FightStatus::Win);
-        mPlayer1->EndFight(FightStatus::Lose);
-    } else {
-        mPlayer1->EndFight(FightStatus::Win);
-        mPlayer2->EndFight(FightStatus::Lose);
+void Game::UnloadActors() {
+    while (!mActors.empty()) {
+        delete mActors.back();
     }
+
+    delete mScene;
 }
 
 SDL_Texture *Game::LoadTexture(const std::string &texturePath) {

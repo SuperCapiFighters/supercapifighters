@@ -10,6 +10,7 @@
 #include <vector>
 #include <SDL2/SDL_stdinc.h>
 #include "../Math.h"
+#include "../Scenes/Scene.h"
 #include "../Components/ColliderComponents/AABBColliderComponent.h"
 #include <unordered_map>
 
@@ -23,7 +24,7 @@ enum class ActorState
 class Actor
 {
 public:
-    Actor(class Game* game, Vector2 position = Vector2::Zero);
+    Actor(class Scene* scene, Vector2 position = Vector2::Zero);
     virtual ~Actor();
 
     // Update function called from Game (not overridable)
@@ -50,7 +51,7 @@ public:
     void SetState(ActorState state) { mState = state; }
 
     // Game getter
-    class Game* GetGame() { return mGame; }
+    class Game* GetGame() { return mScene->GetGame(); }
 
     // Returns component of type T, or null if doesn't exist
     template <typename T>
@@ -75,7 +76,7 @@ public:
     virtual void ApplyDamage(float damage);
 
 protected:
-    class Game* mGame;
+    class Scene* mScene;
 
     // Any actor-specific update code (overridable)
     virtual void OnUpdate(float deltaTime);
