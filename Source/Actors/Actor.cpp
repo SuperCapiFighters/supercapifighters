@@ -11,12 +11,14 @@
 #include "../Components/Component.h"
 #include <algorithm>
 
-Actor::Actor(Scene* scene, Vector2 position)
+Actor::Actor(Scene* scene,float heart, Vector2 position)
         : mState(ActorState::Active)
         , mPosition(position)
         , mScale(1.0f)
         , mRotation(0.0f)
         , mScene(scene)
+        , mHeart(heart)
+        , mMaxHeart(heart)
 {
     mScene->GetGame()->AddActor(this);
 }

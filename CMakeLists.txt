@@ -47,6 +47,8 @@ add_executable(${PROJECT_NAME}
         Source/Scenes/Scene.h
         Source/Scenes/Overworld.cpp
         Source/Scenes/Overworld.h
+        Source/Components/DrawComponents/DrawHealthBar.cpp
+        Source/Components/DrawComponents/DrawHealthBar.h
 )
 
 ####### DO NOT EDIT BELLOW

@@ -24,7 +24,7 @@ enum class ActorState
 class Actor
 {
 public:
-    Actor(class Scene* scene, Vector2 position = Vector2::Zero);
+    Actor(class Scene* scene, float heart = 100.0f, Vector2 position = Vector2::Zero);
     virtual ~Actor();
 
     // Update function called from Game (not overridable)
@@ -73,6 +73,8 @@ public:
     virtual void OnCollision(std::unordered_map<CollisionSide, AABBColliderComponent::Overlap>& responses);
     virtual void Kill();
 
+    float GetHeart() const { return mHeart; }
+    float GetMaxHeart() const { return mMaxHeart; }
     virtual void ApplyDamage(float damage);
 
 protected:
@@ -91,6 +93,8 @@ protected:
     Vector2 mPosition;
     float mScale;
     float mRotation;
+    float mHeart;
+    float mMaxHeart;
 
     // Components
     std::vector<class Component*> mComponents;
