@@ -9,7 +9,7 @@
 
 #define FLOOR_HEIGHT 50.0f
 
-Player::Player(Scene *scene, Vector2 position, int playerNumber, CharacterSelect characterSelect,float heart, float forwardSpeed, float jumpSpeed)
+Player::Player(Scene *scene, Vector2 position, int playerNumber, CharacterSelect characterSelect, float heart, float forwardSpeed, float jumpSpeed)
         : Actor(scene, heart, position),
           mPlayerNumber(playerNumber),
           mCharacterSelect(characterSelect),
